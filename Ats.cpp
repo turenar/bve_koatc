@@ -7,18 +7,17 @@
 #include "Monitor.h"
 #include "Ats.h"
 
-BOOL APIENTRY DllMain( HANDLE hModule, 
-                       DWORD  ul_reason_for_call, 
-                       LPVOID lpReserved
-					 )
-{
+BOOL APIENTRY DllMain(HANDLE hModule,
+	DWORD  ul_reason_for_call,
+	LPVOID lpReserved
+	) {
 	// get DLL path and create ini path
-	GetModuleFileName( (HINSTANCE)hModule, g_fullpath, sizeof(g_fullpath));
+	GetModuleFileName((HINSTANCE) hModule, g_fullpath, sizeof(g_fullpath));
 	_splitpath_s(g_fullpath, g_drive, g_dir, g_fname, g_ext);
-	strcpy_s( g_path, sizeof(g_path), g_drive );
-	strcat_s( g_path, sizeof(g_path) - strlen(g_path), g_dir );
-	strcpy_s( g_inifilepath, sizeof(g_inifilepath), g_path );
-	strcat_s( g_inifilepath, sizeof(g_inifilepath) - strlen(g_inifilepath), "ats.ini" );
+	strcpy_s(g_path, sizeof(g_path), g_drive);
+	strcat_s(g_path, sizeof(g_path) - strlen(g_path), g_dir);
+	strcpy_s(g_inifilepath, sizeof(g_inifilepath), g_path);
+	strcat_s(g_inifilepath, sizeof(g_inifilepath) - strlen(g_inifilepath), "ats.ini");
 	OutputDebugString("\n\nDebug: DLL file path = ");
 	OutputDebugString(g_fullpath);
 	OutputDebugString("\n");
@@ -27,47 +26,42 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 	OutputDebugString("\n");
 	// end of ini path
 
-	switch (ul_reason_for_call)
-	{
-		case DLL_PROCESS_ATTACH:
-			break;
-		case DLL_THREAD_ATTACH:
-			break;
-		case DLL_THREAD_DETACH:
-			break;
-		case DLL_PROCESS_DETACH:
-			break;
-    }
-    return TRUE;
+	switch (ul_reason_for_call) {
+	case DLL_PROCESS_ATTACH:
+		break;
+	case DLL_THREAD_ATTACH:
+		break;
+	case DLL_THREAD_DETACH:
+		break;
+	case DLL_PROCESS_DETACH:
+		break;
+	}
+	return TRUE;
 }
 
-ATS_API int WINAPI GetPluginVersion()
-{
+ATS_API int WINAPI GetPluginVersion() {
 	return ATS_VERSION;
 }
- 
-ATS_API void WINAPI SetVehicleSpec(ATS_VEHICLESPEC vehicleSpec)
-{
+
+ATS_API void WINAPI SetVehicleSpec(ATS_VEHICLESPEC vehicleSpec) {
 	g_SvcBrake = vehicleSpec.BrakeNotches;
 	g_EmrBrake = g_SvcBrake + 1;
-	g_mon.SetVS( &vehicleSpec, g_path );
-	g_koatc.SetVS( &vehicleSpec, g_path );
+	g_mon.SetVS(&vehicleSpec, g_path);
+	g_koatc.SetVS(&vehicleSpec, g_path);
 }
 
-ATS_API void WINAPI Initialize(int brake)
-{
+ATS_API void WINAPI Initialize(int brake) {
 	g_speed = 0;
 
 	// ini file
-	g_genLog = GetPrivateProfileInt( TEXT("General"), TEXT("Log"), 0, g_inifilepath );
-	
+	g_genLog = GetPrivateProfileInt(TEXT("General"), TEXT("Log"), 0, g_inifilepath);
+
 	// initialize
 	g_koatc.Init();
 	g_mon.Init(true);
 }
 
-ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int *sound)
-{
+ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int *sound) {
 	// for debug ////////////////
 	/*
 	char debugstr[1000]="debugstr";
@@ -94,52 +88,44 @@ ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int
 	g_output.Reverser = g_mon.ctrl.rvs;
 
 	// Brake Instruction
-	if ( g_koatc.kosigmgr.emgBrk || ( g_mon.ctrl.brk == g_EmrBrake ) ) {
+	if (g_koatc.kosigmgr.emgBrk || (g_mon.ctrl.brk == g_EmrBrake)) {
 		g_output.Brake = g_EmrBrake;
-	}
-	else if ( g_mon.ctrl.brk < g_koatc.brkOutput )	{
+	} else if (g_mon.ctrl.brk < g_koatc.brkOutput) {
 		g_output.Brake = g_koatc.brkOutput;
-	}
-	else {
+	} else {
 		g_output.Brake = g_mon.ctrl.brk;
 	}
 	// Power Instruction
-	if ( g_output.Brake == 0  && g_pilotlamp) {
+	if (g_output.Brake == 0 && g_pilotlamp) {
 		g_output.Power = g_mon.ctrl.mc;
-	}
-	else g_output.Power = 0;
+	} else g_output.Power = 0;
 
-	g_mon.Run( &vehicleState, &g_output );
+	g_mon.Run(&vehicleState, &g_output);
 
 	g_output.ConstantSpeed = g_mon.ctrl.csc;
 
-	g_koatc.Run( &vehicleState, g_mon.ctrl.brk );
+	g_koatc.Run(&vehicleState, g_mon.ctrl.brk);
 
-	PanelAssign( panel );
-	SoundAssign( sound );
+	PanelAssign(panel);
+	SoundAssign(sound);
 
-    return g_output;
+	return g_output;
 }
 
-ATS_API void WINAPI SetPower(int notch)
-{
+ATS_API void WINAPI SetPower(int notch) {
 	g_mon.MCInput(notch);
 }
 
-ATS_API void WINAPI SetBrake(int notch)
-{
+ATS_API void WINAPI SetBrake(int notch) {
 	g_mon.BHInput(notch);
 }
 
-ATS_API void WINAPI SetReverser(int pos)
-{
+ATS_API void WINAPI SetReverser(int pos) {
 	g_mon.RVSInput(pos);
 }
 
-ATS_API void WINAPI KeyDown(int atsKeyCode)
-{
-	switch (atsKeyCode)
-	{
+ATS_API void WINAPI KeyDown(int atsKeyCode) {
+	switch (atsKeyCode) {
 	case ATS_KEY_S:
 		break;
 	case ATS_KEY_A1: // Ins
@@ -147,8 +133,8 @@ ATS_API void WINAPI KeyDown(int atsKeyCode)
 	case ATS_KEY_B1: // Home
 		break;
 	case ATS_KEY_B2: // End
-		if ( g_speed == 0.0f ) {
-			g_koatc.Confirm( true );
+		if (g_speed == 0.0f) {
+			g_koatc.Confirm(true);
 		}
 		break;
 	case ATS_KEY_D:
@@ -166,48 +152,41 @@ ATS_API void WINAPI KeyDown(int atsKeyCode)
 	}
 }
 
-ATS_API void WINAPI KeyUp(int hornType)
-{
-//	if( hornType == ATS_KEY_S ){ g_atssn.UpButton(); }
+ATS_API void WINAPI KeyUp(int hornType) {
+	//	if( hornType == ATS_KEY_S ){ g_atssn.UpButton(); }
 }
 
-ATS_API void WINAPI HornBlow(int atsHornBlowIndex)
-{
+ATS_API void WINAPI HornBlow(int atsHornBlowIndex) {
 }
 
-ATS_API void WINAPI DoorOpen()
-{
+ATS_API void WINAPI DoorOpen() {
 	g_pilotlamp = false;
 	g_mon.DoorOpn();
 }
 
-ATS_API void WINAPI DoorClose()
-{
+ATS_API void WINAPI DoorClose() {
 	g_pilotlamp = true;
 	g_mon.DoorCls();
 }
 
-ATS_API void WINAPI SetSignal(int signal)
-{
-	g_koatc.SetNewSig( g_location, signal );
+ATS_API void WINAPI SetSignal(int signal) {
+	g_koatc.SetNewSig(g_location, signal);
 }
 
-ATS_API void WINAPI SetBeaconData(ATS_BEACONDATA beaconData)
-{
+ATS_API void WINAPI SetBeaconData(ATS_BEACONDATA beaconData) {
 	// for ATC and Monitor
-	beaconIdx.push_back( beaconData.Type );
-	beaconSig.push_back( beaconData.Signal);
-	beaconDist.push_back( beaconData.Distance);
-	beaconOpt.push_back( beaconData.Optional );
+	beaconIdx.push_back(beaconData.Type);
+	beaconSig.push_back(beaconData.Signal);
+	beaconDist.push_back(beaconData.Distance);
+	beaconOpt.push_back(beaconData.Optional);
 	// for Wayside Instruments
-	switch ( beaconData.Type ) {
-		case	ATS_BEACON_KOATC_BARLIMIT:
-			g_koatc.kobarlimit.BarLimit( g_location, g_speed, &beaconData );
-			break;
+	switch (beaconData.Type) {
+	case	ATS_BEACON_KOATC_BARLIMIT:
+		g_koatc.kobarlimit.BarLimit(g_location, g_speed, &beaconData);
+		break;
 	}
 }
-void BeaconReader()
-{
+void BeaconReader() {
 	int b_id, b_sig, b_op;
 	float b_dist;
 	// for debug ////////////////
@@ -215,25 +194,25 @@ void BeaconReader()
 	FILE *outputfile;
 	TCHAR outfilepath[_MAX_PATH];
 	char logmode[3];
-	if ( g_genLog == -1 ) strcpy_s( logmode, sizeof(logmode), "a" );
-	else strcpy_s( logmode, sizeof(logmode), "w" );
-	strcpy_s( outfilepath, sizeof(outfilepath), g_path );
-	strcat_s( outfilepath, sizeof(outfilepath) - strlen(outfilepath), "BeaconLog.txt" );
+	if (g_genLog == -1) strcpy_s(logmode, sizeof(logmode), "a");
+	else strcpy_s(logmode, sizeof(logmode), "w");
+	strcpy_s(outfilepath, sizeof(outfilepath), g_path);
+	strcat_s(outfilepath, sizeof(outfilepath) - strlen(outfilepath), "BeaconLog.txt");
 	///////////////////////////////
 
-	while ( !beaconIdx.empty() && !beaconSig.empty() && !beaconDist.empty() && !beaconOpt.empty() ) {
+	while (!beaconIdx.empty() && !beaconSig.empty() && !beaconDist.empty() && !beaconOpt.empty()) {
 		b_id = beaconIdx.front(); beaconIdx.pop_front();
 		b_sig = beaconSig.front(); beaconSig.pop_front();
 		b_dist = beaconDist.front(); beaconDist.pop_front();
 		b_op = beaconOpt.front(); beaconOpt.pop_front();
-		BeaconProcessor( b_id, b_sig, b_dist, b_op );
+		BeaconProcessor(b_id, b_sig, b_dist, b_op);
 
 		// for debug ////////////////
-		OutputDebugString( ("--beacon--\n") );
-		sprintf_s( debugstr, sizeof(debugstr) , "gLoc: %f / Ty: %d / Sg: %d / Dt: %f / Op: %d\n", g_location, b_id, b_sig, b_dist, b_op);
-		OutputDebugString( debugstr );
-		if ( g_genLog != 0 ) {
-			if ( fopen_s( &outputfile, outfilepath, logmode ) == 0) {
+		OutputDebugString(("--beacon--\n"));
+		sprintf_s(debugstr, sizeof(debugstr), "gLoc: %f / Ty: %d / Sg: %d / Dt: %f / Op: %d\n", g_location, b_id, b_sig, b_dist, b_op);
+		OutputDebugString(debugstr);
+		if (g_genLog != 0) {
+			if (fopen_s(&outputfile, outfilepath, logmode) == 0) {
 				fprintf_s(outputfile, debugstr);
 				fclose(outputfile);
 			}
@@ -245,87 +224,85 @@ void BeaconReader()
 	beaconDist.clear();
 	beaconOpt.clear();
 }
-void BeaconProcessor( int beaconindex, int sig, float dist, int optional )
-{
-	switch( beaconindex ) {
-		case	ATS_BEACON_KOSTA_NOW:
-			g_koatc.koatcsta.SetTrainID( optional );
-			g_mon.SetTrainID( optional );
-			break;
-		case	ATS_BEACON_KOSTA_STOP:
-			g_koatc.koatcsta.StaStop( optional, g_time, g_speed );
-			break;
-		case	ATS_BEACON_KOSTA_SB:
-			g_koatc.kosta1.RegPatt( 2, g_location, g_koatc.koatcsta.StaPatt( g_location, optional ) );
-			break;
-		case	ATS_BEACON_KOSTA_EB:
-			g_koatc.kosta2.RegPatt( 3, g_location, g_koatc.koatcsta.StaPatt( g_location, optional ) );
-			break;
-		case ATS_BEACON_KOATC_SECTION:
-			g_koatc.Confirm( false );
-			g_koatc.kosecmgr.Reg( g_location, dist, optional );
-			break;
-		case ATS_BEACON_KOATC_SB:
-			g_koatc.ko2step1.RegPatt( 0, g_location, g_koatc.ORPStart( g_location, sig, dist, optional ) );
-			break;
-		case ATS_BEACON_KOATC_LIMIT_1:
-			g_koatc.kolimit1.RegPatt( 0, g_location, optional );
-			break;
-		case ATS_BEACON_KOATC_LIMIT_2:
-			g_koatc.kolimit2.RegPatt( 0, g_location, optional );
-			break;
-		case ATS_BEACON_KOATC_LIMIT_3:
-			g_koatc.kolimit3.RegPatt( 0, g_location, optional );
-			break;
-		case ATS_BEACON_KOATC_LIMIT_4:
-			g_koatc.kolimit4.RegPatt( 0, g_location, optional );
-			break;
-		case ATS_BEACON_MON_KMORG:
-			g_mon.SetKmOrg( g_location );
-			break;
-		case ATS_BEACON_MON_STAORG:
-			g_mon.SetTrainOrg( optional );
-			break;
-		case ATS_BEACON_MON_STADEST:
-			g_mon.SetTrainDest( optional );
-			break;
-		case ATS_BEACON_MON_STANEXT:
-			g_mon.SetNextSta( optional );
-			break;
-		case ATS_BEACON_MON_STANEXT2:
-			g_mon.SetNext2Sta( optional );
-			break;
+void BeaconProcessor(int beaconindex, int sig, float dist, int optional) {
+	switch (beaconindex) {
+	case	ATS_BEACON_KOSTA_NOW:
+		g_koatc.koatcsta.SetTrainID(optional);
+		g_mon.SetTrainID(optional);
+		break;
+	case	ATS_BEACON_KOSTA_STOP:
+		g_koatc.koatcsta.StaStop(optional, g_time, g_speed);
+		break;
+	case	ATS_BEACON_KOSTA_SB:
+		g_koatc.kosta1.RegPatt(2, g_location, g_koatc.koatcsta.StaPatt(g_location, optional));
+		break;
+	case	ATS_BEACON_KOSTA_EB:
+		g_koatc.kosta2.RegPatt(3, g_location, g_koatc.koatcsta.StaPatt(g_location, optional));
+		break;
+	case ATS_BEACON_KOATC_SECTION:
+		g_koatc.Confirm(false);
+		g_koatc.kosecmgr.Reg(g_location, dist, optional);
+		break;
+	case ATS_BEACON_KOATC_SB:
+		g_koatc.ko2step1.RegPatt(0, g_location, g_koatc.ORPStart(g_location, sig, dist, optional));
+		break;
+	case ATS_BEACON_KOATC_LIMIT_1:
+		g_koatc.kolimit1.RegPatt(0, g_location, optional);
+		break;
+	case ATS_BEACON_KOATC_LIMIT_2:
+		g_koatc.kolimit2.RegPatt(0, g_location, optional);
+		break;
+	case ATS_BEACON_KOATC_LIMIT_3:
+		g_koatc.kolimit3.RegPatt(0, g_location, optional);
+		break;
+	case ATS_BEACON_KOATC_LIMIT_4:
+		g_koatc.kolimit4.RegPatt(0, g_location, optional);
+		break;
+	case ATS_BEACON_MON_KMORG:
+		g_mon.SetKmOrg(g_location);
+		break;
+	case ATS_BEACON_MON_STAORG:
+		g_mon.SetTrainOrg(optional);
+		break;
+	case ATS_BEACON_MON_STADEST:
+		g_mon.SetTrainDest(optional);
+		break;
+	case ATS_BEACON_MON_STANEXT:
+		g_mon.SetNextSta(optional);
+		break;
+	case ATS_BEACON_MON_STANEXT2:
+		g_mon.SetNext2Sta(optional);
+		break;
 	}
 }
 
-void PanelAssign( int *panel )
-{
-	panel[21]	= g_koatc.atcEnable;
-	panel[22]	= g_koatc.kosigmgr.emgBrk;
-	panel[23]	= g_koatc.svcBrk;
-	panel[46]	= g_koatc.atcEnable;
-	panel[48]	= g_koatc.atcConfirm;
-	panel[101]	= g_koatc.kosigmgr.atcX;
-	panel[102]	= g_koatc.atcBits & 1;	// atc0
+void PanelAssign(int *panel) {
+	panel[21] = g_koatc.atcEnable;
+	panel[22] = g_koatc.kosigmgr.emgBrk;
+	panel[23] = g_koatc.svcBrk;
+	panel[46] = g_koatc.atcEnable;
+	panel[48] = g_koatc.atcConfirm;
+	panel[101] = g_koatc.kosigmgr.atcX;
+	panel[102] = g_koatc.atcBits & 1;	// atc0
 	panel[0] = panel[102];
-	panel[103]	= g_koatc.atcBits & 2;	// atc5
-	panel[104]	= g_koatc.atcBits & 4;	// atc10
-	panel[105]	= g_koatc.atcBits & 8;	// atc15
-	panel[5]	= panel[105];
-	panel[106]	= g_koatc.atcBits & 16;	// atc20
+	panel[103] = g_koatc.atcBits & 2;	// atc5
+	panel[104] = g_koatc.atcBits & 4;	// atc10
+	panel[105] = g_koatc.atcBits & 8;	// atc15
+	panel[5] = panel[105];
+	panel[106] = g_koatc.atcBits & 16;	// atc20
 	panel[107] = g_koatc.atcBits & 32;	// atc25
 	panel[1] = panel[107];
-	panel[108]	= g_koatc.atcBits & 64;	// atc30
-	panel[109]	= g_koatc.atcBits & 128;	// atc35
-	panel[110]	= g_koatc.atcBits & 256;	// atc40
+	panel[108] = g_koatc.atcBits & 64;	// atc30
+	panel[109] = g_koatc.atcBits & 128;	// atc35
+	panel[110] = g_koatc.atcBits & 256;	// atc40
 	panel[111] = g_koatc.atcBits & 512;	// atc45
 	panel[2] = panel[111];
-	panel[112]	= g_koatc.atcBits & 1024;	// atc50
-	panel[113]	= g_koatc.atcBits & 2048;	// atc55
-	panel[114]	= g_koatc.atcBits & 4096;	// atc60
-	panel[115]	= g_koatc.atcBits & 8192;	// atc65
-	panel[116]	= g_koatc.atcBits & 16384;	// atc70
-	panel[117]	= g_koatc.atcBits & 32768;	// atc75
+	panel[112] = g_koatc.atcBits & 1024;	// atc50
+	panel[113] = g_koatc.atcBits & 2048;	// atc55
+	panel[114] = g_koatc.atcBits & 4096;	// atc60
+	panel[115] = g_koatc.atcBits & 8192;	// atc65
+	panel[116] = g_koatc.atcBits & 16384;	// atc70
+	panel[117] = g_koatc.atcBits & 32768;	// atc75
 	panel[3] = panel[117];
 	panel[118] = g_koatc.atcBits & 65536;	// atc 80
 	panel[119] = g_koatc.atcBits & 131072;	// atc 85
@@ -339,7 +316,7 @@ void PanelAssign( int *panel )
 	panel[125] = g_koatc.atcBits & 16777216;	// atc 120
 	panel[131] = g_koatc.kosigmgr.red;
 	panel[132] = g_koatc.kosigmgr.green;
-	
+
 	//TIMS
 	panel[185] = g_mon.crntDigits[0];
 	panel[186] = g_mon.crntDigits[1];
@@ -392,8 +369,7 @@ void PanelAssign( int *panel )
 	panel[251] = g_koatc.kosecmgr.isValid;
 	panel[252] = g_koatc.kosigmgr.stopRC;
 }
-void SoundAssign( int *sound )
-{
-	sound[2]		=	g_koatc.atcBellSt;
-	sound[171]	=	g_koatc.atcBuzzSt;
+void SoundAssign(int *sound) {
+	sound[2] = g_koatc.atcBellSt;
+	sound[171] = g_koatc.atcBuzzSt;
 }

@@ -53,8 +53,7 @@
 #define ATS_CONSTANTSPEED_DISABLE	2	// Disable
 
 // Vehicle Specification
-struct ATS_VEHICLESPEC
-{
+struct ATS_VEHICLESPEC {
 	int BrakeNotches;	// Number of Brake Notches
 	int PowerNotches;	// Number of Power Notches
 	int AtsNotch;		// ATS Cancel Notch
@@ -63,8 +62,7 @@ struct ATS_VEHICLESPEC
 };
 
 // State Quantity of Vehicle
-struct ATS_VEHICLESTATE
-{
+struct ATS_VEHICLESTATE {
 	double Location;	// Train Position (Z-axis) (m)
 	float Speed;		// Train Speed (km/h)
 	int Time;			// Time (ms)
@@ -77,8 +75,7 @@ struct ATS_VEHICLESTATE
 };
 
 // Received Data from Beacon
-struct ATS_BEACONDATA
-{
+struct ATS_BEACONDATA {
 	int Type;		// Type of Beacon
 	int Signal;		// Signal of Connected Section
 	float Distance;	// Distance to Connected Section (m)
@@ -86,8 +83,7 @@ struct ATS_BEACONDATA
 };
 
 // Train Operation Instruction
-struct ATS_HANDLES
-{
+struct ATS_HANDLES {
 	int Brake;		// Brake Notch
 	int Power;		// Power Notch
 	int Reverser;	// Reverser Position

@@ -30,11 +30,11 @@ std::list<int> beaconOpt;
 
 ATS_HANDLES g_output; // èoóÕ
 
-void BeaconProcessor( int , int , float , int );
-void BeaconReader( void );
-void PanelAssign( int* );
-void SoundAssign( int* );
+void BeaconProcessor(int, int, float, int);
+void BeaconReader(void);
+void PanelAssign(int*);
+void SoundAssign(int*);
 
-CKoAtc g_koatc;	
+CKoAtc g_koatc;
 
 CMon g_mon;

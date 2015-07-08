@@ -50,10 +50,10 @@ private:
 
 	void BellStop(void);
 	void BellHit(void);
-	void SetPattern( int, int, double, double, double, int, double );
+	void SetPattern(int, int, double, double, double, int, double);
 	void Timeshock();
-	void Output( float, int, int );
-	void RunClock( ATS_VEHICLESTATE*, int brake );
+	void Output(float, int, int);
+	void RunClock(ATS_VEHICLESTATE*, int brake);
 
 public:
 	bool atcEnable;
@@ -69,11 +69,11 @@ public:
 	CKoAtc(void);
 	virtual ~CKoAtc(void);
 	void Init();
-	void SetVS( ATS_VEHICLESPEC*, TCHAR* );
-	void Run( ATS_VEHICLESTATE*, int );
-	void Confirm( bool );
-	int ORPStart( double, int , float, int );
-	void SetNewSig( double, int );
+	void SetVS(ATS_VEHICLESPEC*, TCHAR*);
+	void Run(ATS_VEHICLESTATE*, int);
+	void Confirm(bool);
+	int ORPStart(double, int, float, int);
+	void SetNewSig(double, int);
 
 	////////////////////////////////////////////////////////
 	class CSigMgr {
@@ -91,7 +91,7 @@ public:
 		int stopRC;
 
 		void Init(void);
-		void UpdateSig( ATS_VEHICLESTATE* );
+		void UpdateSig(ATS_VEHICLESTATE*);
 		void SetSig(int);
 		void EmgInput(int);
 	};
@@ -110,8 +110,8 @@ public:
 		int sectionOpt;
 		int isValid;
 		void Init();
-		void Reg(double, float, int );
-		void Calc( double , int  );
+		void Reg(double, float, int);
+		void Calc(double, int);
 	};
 
 	////////////////////////////////////////////////////////
@@ -136,9 +136,9 @@ public:
 		double halfBrkLimit;
 		double fullBrkLimit;
 		double emgBrkLimit;
-		void Init( int, int, int, int, int, int, int );
-		void RegPatt( int, double, int );
-		void CalcPatt( double );
+		void Init(int, int, int, int, int, int, int);
+		void RegPatt(int, double, int);
+		void CalcPatt(double);
 	};
 	////////////////////////////////////////////////////////
 	class CKoAtcSta {
@@ -156,13 +156,13 @@ public:
 		int staBuzzSt;
 		int numOfBrkNotches;
 
-		void SetVS( ATS_VEHICLESPEC*, TCHAR*  );
-		void Init( bool );
-		void SetTrainID( int );
-		void StaStop( int, int, float );
-		int StaPatt( double, int );
-		bool RunJob( double, float, int );
-		void BuzzMgr( int );
+		void SetVS(ATS_VEHICLESPEC*, TCHAR*);
+		void Init(bool);
+		void SetTrainID(int);
+		void StaStop(int, int, float);
+		int StaPatt(double, int);
+		bool RunJob(double, float, int);
+		void BuzzMgr(int);
 	};
 	////////////////////////////////////////////////////////
 	class CBarLimit {
@@ -172,15 +172,15 @@ public:
 	public:
 		bool tooFast;
 		void Reset();
-		void BarLimit( double,  float, ATS_BEACONDATA* );
+		void BarLimit(double, float, ATS_BEACONDATA*);
 	};
 	////////////////////////////////////////////////////////
-	CKoAtc::CSectMgr kosecmgr;	
-	CKoAtc::CSigMgr kosigmgr;	
-	CKoAtc::CPattern kopattern;	
-	CKoAtc::CPattern ko2step1;	
-	CKoAtc::CPattern kolimit1;	
-	CKoAtc::CPattern kolimit2;	
+	CKoAtc::CSectMgr kosecmgr;
+	CKoAtc::CSigMgr kosigmgr;
+	CKoAtc::CPattern kopattern;
+	CKoAtc::CPattern ko2step1;
+	CKoAtc::CPattern kolimit1;
+	CKoAtc::CPattern kolimit2;
 	CKoAtc::CPattern kolimit3;
 	CKoAtc::CPattern kolimit4;
 	CKoAtc::CPattern kosta1;

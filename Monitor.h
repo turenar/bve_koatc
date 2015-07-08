@@ -25,11 +25,11 @@ private:
 	int timePrev;
 
 	// call from only "run" func. 
-	void Clocker( ATS_VEHICLESTATE* );
-	void RunClock250( ATS_VEHICLESTATE* );
-	void RunClock1000( ATS_VEHICLESTATE* );
-	void GenSpdMtr( float );
-	void CSC( ATS_VEHICLESTATE* );
+	void Clocker(ATS_VEHICLESTATE*);
+	void RunClock250(ATS_VEHICLESTATE*);
+	void RunClock1000(ATS_VEHICLESTATE*);
+	void GenSpdMtr(float);
+	void CSC(ATS_VEHICLESTATE*);
 
 public:
 	int speed;
@@ -58,18 +58,18 @@ public:
 		int next2;
 		int dest;
 	} sta;
-	void SetVS( ATS_VEHICLESPEC*, TCHAR* );
-	void Init( bool );
-	void Run( ATS_VEHICLESTATE*, ATS_HANDLES* );
-	void SetTrainID( int );
-	void MCInput( int );
-	void BHInput( int );
-	void RVSInput( int );
-	void SetKmOrg( double );
-	void SetTrainOrg( int );
-	void SetTrainDest( int );
-	void SetNextSta( int );
-	void SetNext2Sta( int );
-	void DoorOpn( void );
-	void DoorCls( void );
+	void SetVS(ATS_VEHICLESPEC*, TCHAR*);
+	void Init(bool);
+	void Run(ATS_VEHICLESTATE*, ATS_HANDLES*);
+	void SetTrainID(int);
+	void MCInput(int);
+	void BHInput(int);
+	void RVSInput(int);
+	void SetKmOrg(double);
+	void SetTrainOrg(int);
+	void SetTrainDest(int);
+	void SetNextSta(int);
+	void SetNext2Sta(int);
+	void DoorOpn(void);
+	void DoorCls(void);
 };
