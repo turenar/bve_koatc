@@ -268,6 +268,10 @@ void BeaconProcessor(int beaconindex, int sig, float dist, int optional) {
 	case	ATS_BEACON_KOSTA_NOW:
 		g_koatc.koatcsta.SetTrainID(optional);
 		g_mon.SetTrainID(optional);
+		if (g_koatc.kosta1.type & 2 || g_koatc.kosta2.type & 2) {
+			// í‚é‘ÉpÉ^Å[Éìê∂ê¨íÜ
+			g_koatc.staAvoidOverrun = true;
+		}
 		break;
 	case	ATS_BEACON_KOSTA_STOP:
 		g_koatc.koatcsta.StaStop(optional, g_time, g_speed);
