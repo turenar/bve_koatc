@@ -25,6 +25,8 @@
 
 ////////////////////////////////////////////////////////
 class CKoAtc {
+public:
+	class CPattern;
 private:
 	TCHAR iniPath[_MAX_PATH];
 	TCHAR logPath[_MAX_PATH];
@@ -51,7 +53,7 @@ private:
 
 	void BellStop(void);
 	void BellHit(void);
-	void SetPattern(int, int, double, double, double, int, double);
+	void SetPattern(ATS_VEHICLESTATE*, CPattern&, bool);
 	void Timeshock();
 	void Output(float, int, int);
 	void RunClock(ATS_VEHICLESTATE*, int brake);
@@ -59,6 +61,7 @@ private:
 public:
 	bool atcEnable;
 	bool atcConfirm;
+	bool staAvoidOverrun = false;
 	unsigned long atcBits;
 	int brkOutput;
 	bool svcBrk;

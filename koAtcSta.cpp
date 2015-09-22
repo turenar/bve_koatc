@@ -52,8 +52,10 @@ int CKoAtc::CKoAtcSta::StaPatt(double location, int optional) {
 bool CKoAtc::CKoAtcSta::RunJob(double location, float speed, int bh_pos) {
 	bool out;
 	if (enable) {
-		if (speed == 0.0f && numOfBrkNotches <= bh_pos && staStopNum == staNow) {
+		if (speed == 0.0f && staStopNum == staNow && (numOfBrkNotches + 1 <= bh_pos ||
+			(numOfBrkNotches <= bh_pos && ((!g_pilotlamp && g_sta_dopen_timer <= g_time) || g_sta_dopen_timer == -1)))) {
 			staStopNum = KOATC_STA_CANCEL;
+			g_koatc.staAvoidOverrun = false;
 			out = true;
 		} else out = false;
 	} else out = false;

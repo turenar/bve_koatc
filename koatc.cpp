@@ -127,15 +127,30 @@ void CKoAtc::RunClock(ATS_VEHICLESTATE *state, int brake) {
 	kosta2.CalcPatt(state->Location);
 	koatcmax.CalcPatt(state->Location);
 
-	SetPattern(state->Time, kopattern.type, kopattern.halfBrkLimit, kopattern.fullBrkLimit, kopattern.emgBrkLimit, kopattern.flatLimit, kopattern.pattDist);
-	SetPattern(state->Time, ko2step1.type, ko2step1.halfBrkLimit, ko2step1.fullBrkLimit, ko2step1.emgBrkLimit, ko2step1.flatLimit, ko2step1.pattDist);
-	SetPattern(state->Time, kolimit1.type, kolimit1.halfBrkLimit, kolimit1.fullBrkLimit, kolimit1.emgBrkLimit, kolimit1.flatLimit, kolimit1.pattDist);
-	SetPattern(state->Time, kolimit2.type, kolimit2.halfBrkLimit, kolimit2.fullBrkLimit, kolimit2.emgBrkLimit, kolimit2.flatLimit, kolimit2.pattDist);
-	SetPattern(state->Time, kolimit3.type, kolimit3.halfBrkLimit, kolimit3.fullBrkLimit, kolimit3.emgBrkLimit, kolimit3.flatLimit, kolimit3.pattDist);
-	SetPattern(state->Time, kolimit4.type, kolimit4.halfBrkLimit, kolimit4.fullBrkLimit, kolimit4.emgBrkLimit, kolimit4.flatLimit, kolimit4.pattDist);
-	SetPattern(state->Time, kosta1.type, kosta1.halfBrkLimit, kosta1.fullBrkLimit, kosta1.emgBrkLimit, kosta1.flatLimit, kosta1.pattDist);
-	SetPattern(state->Time, kosta2.type, kosta2.halfBrkLimit, kosta2.fullBrkLimit, kosta2.emgBrkLimit, kosta2.flatLimit, kosta2.pattDist);
-	SetPattern(state->Time, koatcmax.type, koatcmax.halfBrkLimit, koatcmax.fullBrkLimit, koatcmax.emgBrkLimit, koatcmax.flatLimit, koatcmax.pattDist);
+	SetPattern(state, koatcmax, false);
+	if (kosta2.halfBrkLimit < 0) { // arriving station pattern with emerg brake is non-active
+		SetPattern(state, kopattern, false);
+	}
+	SetPattern(state, ko2step1, false);
+	SetPattern(state, kolimit1, false);
+	SetPattern(state, kolimit2, false);
+	SetPattern(state, kolimit3, false);
+	SetPattern(state, kolimit4, false);
+	SetPattern(state, kosta1, false);
+	SetPattern(state, kosta2, false);
+	// pass2
+	SetPattern(state, koatcmax, true);
+	if (kosta2.halfBrkLimit < 0 && ko2step1.halfBrkLimit < 0) { // arriving station pattern with emerg brake is non-active
+		SetPattern(state, kopattern, true);
+	}
+	SetPattern(state, ko2step1, true);
+	SetPattern(state, kolimit1, true);
+	SetPattern(state, kolimit2, true);
+	SetPattern(state, kolimit3, true);
+	SetPattern(state, kolimit4, true);
+	SetPattern(state, kosta1, true);
+	SetPattern(state, kosta2, true);
+
 	Output(state->Speed, kosigmgr.currSig, state->Time);
 }
 
@@ -154,9 +169,17 @@ void CKoAtc::BellHit(void) {
 	if ((atcBell || kosigmgr.bell) && atcEnable)  atcBellSt = ATS_SOUND_PLAY;
 }
 
-void CKoAtc::SetPattern(int time, int type, double spd1, double spd2, double spd3, int lim, double dist) {
+void CKoAtc::SetPattern(ATS_VEHICLESTATE* state, CKoAtc::CPattern& patt, bool pass2) {
+	float nowSpeed = state->Speed;
+	int time = state->Time;
+	int type = patt.type;
+	double spd1 = patt.halfBrkLimit;
+	double spd2 = patt.fullBrkLimit;
+	double spd3 = patt.emgBrkLimit;
+	int lim = patt.flatLimit;
+	double dist = patt.pattDist;
 	// at new location ( reflesh in any case ) 
-	if (lastTime != time) {
+	if (!pass2&&lastTime != time) {
 		lastTime = time;
 		pattType = type;
 		pattEnd = dist;
@@ -167,7 +190,7 @@ void CKoAtc::SetPattern(int time, int type, double spd1, double spd2, double spd
 	}
 	// at the same location: compare values then choose lower pattern
 	// if valid pattern & lower pattern
-	else if (0 <= spd1 && spd1 < halfBrkLimit) {
+	else if (!pass2 && 0 <= spd1 && spd1 < halfBrkLimit) {
 		// overwrite pattern
 		pattType = type;
 		halfBrkLimit = spd1;
@@ -177,15 +200,19 @@ void CKoAtc::SetPattern(int time, int type, double spd1, double spd2, double spd
 		pattBottom = lim;
 	}
 	// Next pattern ( < 10km/h) Approach
-	else if (halfBrkLimit < spd1 && spd1 < halfBrkLimit + 10 && lim <= pattBottom && pattType % 2 != 1) {
-		pattBottom = lim;
-		if (type % 2 != 0) pattType |= 1;
+	else {
+		if (((halfBrkLimit < spd1 && spd1 < halfBrkLimit + 10) || (0 <= spd1 && spd1 < atcLimitUpper + 10))
+			&& lim <= pattBottom && pattType % 2 != 1) {
+			pattBottom = lim;
+			if (type % 2 != 0) pattType |= 1;
+		}
 	}
 }
 
 void CKoAtc::Output(float speed, int sig, int time) {
 	int speedAbs;
 	int atcLimitUpperPrev;
+	bool isStationStopping = (pattType - pattType % 2) == 2;
 
 	speedAbs = abs((int) speed);
 	atcLimitUpperPrev = atcLimitUpper;
@@ -199,10 +226,10 @@ void CKoAtc::Output(float speed, int sig, int time) {
 		atcLimitLower = 25;
 	}
 	// Safety for backward in case of station stop pattern
-	else if ((pattType - pattType % 2) == 2 && speedAbs <= 5) {
+	else if (isStationStopping && staAvoidOverrun /*&& speedAbs <= 5*/) {
 		halfBrkLimit = 5.0f;
 		fullBrkLimit = 5.0f;
-		emgBrkLimit = 6.0f;
+		emgBrkLimit = 7.0f;
 		atcLimitUpper = 5;
 		atcLimitLower = 5;
 	}
@@ -243,7 +270,7 @@ void CKoAtc::Output(float speed, int sig, int time) {
 			atcLimitLower = 5;
 		}
 		// stopping near red signal
-		else if (speedAbs == 0 && kosigmgr.currSig == 1 && kosecmgr.sectionOpt != 1) {
+		else if (speedAbs == 0 && !isStationStopping && kosigmgr.currSig == 1 && kosecmgr.sectionOpt != 1) {
 			halfBrkLimit = 0;
 			fullBrkLimit = 0;
 			emgBrkLimit = 6.0;
