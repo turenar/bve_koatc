@@ -38,6 +38,7 @@ void CKoAtc::CKoAtcSta::StaStop(int optional, int time, float speed) {
 			staBuzzSt = ATS_SOUND_PLAYLOOPING;
 		}
 		// If the train class did not macth, keep previous state ( reset only performed by Stop & B7)
+		g_sta_dopen_timer = std::numeric_limits<int>::max();
 	}
 }
 int CKoAtc::CKoAtcSta::StaPatt(double location, int optional) {

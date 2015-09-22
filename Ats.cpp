@@ -23,6 +23,8 @@ int g_time; // 現在時刻
 float g_speed; // 速度計の速度[km/h]
 int g_deltaT; // フレーム時間[ms/frame]
 double g_location;	//現在位置
+int g_sta_dopen_timer; // 駅停車→ドア開までのタイマー
+int g_sta_dopen_wait; // 上の時間
 int g_genLog;
 std::list<int> beaconIdx;
 std::list<int> beaconSig;
@@ -89,6 +91,7 @@ ATS_API void WINAPI Initialize(int brake) {
 
 	// ini file
 	g_genLog = GetPrivateProfileInt(TEXT("General"), TEXT("Log"), 0, g_inifilepath);
+	g_sta_dopen_wait = GetPrivateProfileInt(TEXT("Monitor"), TEXT("StaDopenClock"), 2500, g_inifilepath);
 
 	// initialize
 	g_koatc.Init();
@@ -195,12 +198,14 @@ ATS_API void WINAPI HornBlow(int atsHornBlowIndex) {
 
 ATS_API void WINAPI DoorOpen() {
 	g_pilotlamp = false;
+	g_sta_dopen_timer = g_time + g_sta_dopen_wait;
 	g_mon.DoorOpn();
 }
 
 ATS_API void WINAPI DoorClose() {
 	g_pilotlamp = true;
 	g_mon.DoorCls();
+	g_sta_dopen_timer = -1;
 }
 
 ATS_API void WINAPI SetSignal(int signal) {

@@ -28,6 +28,8 @@ extern int g_time; // 現在時刻
 extern float g_speed; // 速度計の速度[km/h]
 extern int g_deltaT; // フレーム時間[ms/frame]
 extern double g_location;	//現在位置
+extern int g_sta_dopen_timer; // ドア開から駅停車パターン消去までのタイマー
+extern int g_sta_dopen_wait; // 上の時間
 extern int g_genLog;
 extern std::list<int> beaconIdx;
 extern std::list<int> beaconSig;
