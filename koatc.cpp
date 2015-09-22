@@ -381,3 +381,16 @@ int CKoAtc::ORPStart(double location, int signal, float distance, int optional) 
 void CKoAtc::SetNewSig(double location, int signal) {
 	kosigmgr.SetSig(signal);
 }
+
+void CKoAtc::SetPattDclr(int pattIndex, int dclrSpeed) {
+	koatcmax.SetPattDclr(pattIndex, dclrSpeed);
+	kopattern.SetPattDclr(pattIndex, dclrSpeed);
+	kosta2.SetPattDclr(pattIndex, dclrSpeed);
+	ko2step1.SetPattDclr(pattIndex, dclrSpeed);
+	kolimit1.SetPattDclr(pattIndex, dclrSpeed);
+	kolimit2.SetPattDclr(pattIndex, dclrSpeed);
+	kolimit3.SetPattDclr(pattIndex, dclrSpeed);
+	kolimit4.SetPattDclr(pattIndex, dclrSpeed);
+	kosta1.SetPattDclr(pattIndex, dclrSpeed);
+	kosta2.SetPattDclr(pattIndex, dclrSpeed);
+}

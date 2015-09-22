@@ -319,6 +319,10 @@ void BeaconProcessor(int beaconindex, int sig, float dist, int optional) {
 	case ATS_BEACON_MON_STANEXT2:
 		g_mon.SetNext2Sta(optional);
 		break;
+	case ATS_BEACON_SET_PATTDCLR_SH:
+	case ATS_BEACON_SET_PATTDCLR_SB:
+	case ATS_BEACON_SET_PATTDCLR_EB:
+		g_koatc.SetPattDclr(beaconindex - ATS_BEACON_SET_PATTDCLR_SH, optional);
 	}
 }
 

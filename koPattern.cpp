@@ -72,3 +72,17 @@ void CKoAtc::CPattern::CalcPatt(double location) {
 		emgBrkLimit = flatLimit + (intrcpEmg - intrcpFull);
 	}
 }
+
+void CKoAtc::CPattern::SetPattDclr(int pattIndex, int dclrIndex) {
+	switch (pattIndex) {
+	case 0:
+		dclrHalf = dclrIndex / 1000.f;
+		break;
+	case 1:
+		dclrFull = dclrIndex / 1000.f;
+		break;
+	case 2:
+		dclrEmg = dclrIndex / 1000.f;
+		break;
+	}
+}

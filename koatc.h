@@ -23,6 +23,9 @@
 #define ATS_BEACON_MON_STANEXT 193	// éüâwê›íË
 #define ATS_BEACON_MON_STANEXT2	194	// éüÅXâwê›íË
 
+#define ATS_BEACON_SET_PATTDCLR_SH 201
+#define ATS_BEACON_SET_PATTDCLR_SB 202
+#define ATS_BEACON_SET_PATTDCLR_EB 203
 
 ////////////////////////////////////////////////////////
 class CKoAtc {
@@ -79,6 +82,7 @@ public:
 	void Confirm(bool);
 	int ORPStart(double, int, float, int);
 	void SetNewSig(double, int);
+	void SetPattDclr(int, int);
 
 	////////////////////////////////////////////////////////
 	class CSigMgr {
@@ -143,7 +147,9 @@ public:
 		double emgBrkLimit;
 		void Init(int, int, int, int, int, int, int);
 		void RegPatt(int, double, int);
+		void ChangeDclr(int, int);
 		void CalcPatt(double);
+		void SetPattDclr(int, int);
 	};
 	////////////////////////////////////////////////////////
 	class CKoAtcSta {
