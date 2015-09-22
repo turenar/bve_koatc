@@ -16,6 +16,7 @@
 #define ATS_BEACON_KOSTA_STOP 181	// 駅停車制御開始/終了
 #define ATS_BEACON_KOSTA_SB 182	// 駅停車パターン(常用B)
 #define ATS_BEACON_KOSTA_EB 183	// 駅停車パターン(非常B)
+#define ATS_BEACON_KOSTA_OVERRUN 184 // 過走防止点照査
 #define ATS_BEACON_MON_KMORG 	190// 距離ゼロ設定
 #define ATS_BEACON_MON_STAORG 	191// 始発駅設定
 #define ATS_BEACON_MON_STADEST	192// 行先設定

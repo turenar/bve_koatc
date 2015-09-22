@@ -273,10 +273,17 @@ void BeaconProcessor(int beaconindex, int sig, float dist, int optional) {
 		g_koatc.koatcsta.StaStop(optional, g_time, g_speed);
 		break;
 	case	ATS_BEACON_KOSTA_SB:
+		g_koatc.staAvoidOverrun = false;
 		g_koatc.kosta1.RegPatt(2, g_location, g_koatc.koatcsta.StaPatt(g_location, optional));
 		break;
 	case	ATS_BEACON_KOSTA_EB:
+		g_koatc.staAvoidOverrun = false;
 		g_koatc.kosta2.RegPatt(3, g_location, g_koatc.koatcsta.StaPatt(g_location, optional));
+		break;
+	case ATS_BEACON_KOSTA_OVERRUN:
+		if (g_koatc.kosta1.type & 2 || g_koatc.kosta2.type & 2) {
+			g_koatc.staAvoidOverrun = true;
+		}
 		break;
 	case ATS_BEACON_KOATC_SECTION:
 		g_koatc.Confirm(false);
