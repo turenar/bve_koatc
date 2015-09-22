@@ -1,3 +1,4 @@
+#pragma once
 #define MON_WS_SP 10;
 #define MON_WS_DT 11;
 #define MON_WS_HY 12;

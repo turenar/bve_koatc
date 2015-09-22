@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "Ats.h"
 #include "atsplugin.h"
 #include "KoAtc.h"
 

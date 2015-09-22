@@ -3,11 +3,12 @@
 //
 //             Rock_On, mackoy
 //=============================
+#pragma once
 
 #ifdef ATS_EXPORTS
-#define ATS_API __declspec(dllexport)
+#define ATS_API extern "C" __declspec(dllexport)
 #else
-#define ATS_API __declspec(dllimport)
+#define ATS_API extern "C" __declspec(dllimport)
 #endif
 
 // ATS Plug-in Version

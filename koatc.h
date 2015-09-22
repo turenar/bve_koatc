@@ -1,3 +1,4 @@
+#pragma once
 #define MAX_PATTERNS 4
 #define KOATC_PRIORITY_PT2 1
 #define KOATC_STA_CANCEL 99
