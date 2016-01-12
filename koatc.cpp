@@ -128,7 +128,9 @@ void CKoAtc::RunClock(ATS_VEHICLESTATE *state, int brake) {
 	koatcmax.CalcPatt(state->Location);
 
 	SetPattern(state, koatcmax, false);
-	if (kosta2.halfBrkLimit < 0) { // arriving station pattern with emerg brake is non-active
+	// if emerg brake before red signal is found, ignore red signal
+	if ((kosta2.halfBrkLimit < 0 || kosecmgr.locationOfR < kosta2.pattEndZero)
+		&& (ko2step1.halfBrkLimit < 0 || kosecmgr.locationOfR < ko2step1.pattEndZero)) {
 		SetPattern(state, kopattern, false);
 	}
 	SetPattern(state, ko2step1, false);
@@ -140,7 +142,9 @@ void CKoAtc::RunClock(ATS_VEHICLESTATE *state, int brake) {
 	SetPattern(state, kosta2, false);
 	// pass2
 	SetPattern(state, koatcmax, true);
-	if (kosta2.halfBrkLimit < 0 && ko2step1.halfBrkLimit < 0) { // arriving station pattern with emerg brake is non-active
+	// if emerg brake before red signal is found, ignore red signal
+	if ((kosta2.halfBrkLimit < 0 || kosecmgr.locationOfR < kosta2.pattEndZero)
+		&& (ko2step1.halfBrkLimit < 0 || kosecmgr.locationOfR < ko2step1.pattEndZero)) {
 		SetPattern(state, kopattern, true);
 	}
 	SetPattern(state, ko2step1, true);
